@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowLeft, Plus, Save, Trash2, X, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2, X, ChevronDown, ChevronUp, Dumbbell } from "lucide-react";
 import { Routine, Exercise, SetInfo } from "../types";
 import { getRoutines, updateRoutine, addRoutine } from "../lib/routineStore";
 
@@ -19,6 +19,7 @@ export default function RoutineDetailPage() {
 
   const [isAddingExercise, setIsAddingExercise] = useState(false);
   const [editingSet, setEditingSet] = useState<{ exId: string; setIdx: number; weight: number; reps: number } | null>(null);
+  const [showExerciseAlert, setShowExerciseAlert] = useState(false);
   const [newExName, setNewExName] = useState("");
   const [newExWeight, setNewExWeight] = useState(20);
   const [newExSets, setNewExSets] = useState(3);
@@ -31,16 +32,20 @@ export default function RoutineDetailPage() {
   }, [id, isNew]);
 
   const handleSave = () => {
-    if (!routine.name.trim()) {
-      alert("루틴 이름을 입력해주세요.");
+    const finalName = routine.name.trim() || "제목 없음";
+    const finalRoutine = { ...routine, name: finalName };
+
+    if (finalRoutine.exercises.length === 0) {
+      setShowExerciseAlert(true);
       return;
     }
+
     if (isNew) {
-      addRoutine(routine);
+      addRoutine(finalRoutine);
       navigate("/routine");
     } else {
-      updateRoutine(routine);
-      navigate(`/routine/${routine.id}`);
+      updateRoutine(finalRoutine);
+      navigate(`/routine/${finalRoutine.id}`);
     }
   };
 
@@ -97,8 +102,41 @@ export default function RoutineDetailPage() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="p-5 max-w-md mx-auto pb-32"
+      className="p-5 max-w-md mx-auto pb-32 relative"
     >
+      {/* Alert Modal */}
+      <AnimatePresence>
+        {showExerciseAlert && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-6"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="glass-card p-8 w-full max-w-xs flex flex-col gap-6"
+            >
+              <div className="space-y-2 text-center">
+                <Dumbbell className="w-12 h-12 text-accent mx-auto mb-4" />
+                <h3 className="text-xl font-black text-white">종목 누락</h3>
+                <p className="text-sm text-white/40 leading-relaxed">
+                  수행 종목을 생성해주세요.<br/>최소 한 개의 운동이 필요합니다.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowExerciseAlert(false)}
+                className="w-full py-4 rounded-2xl bg-accent text-black font-black hover:brightness-110 transition-all"
+              >
+                확인
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <header className="flex items-center justify-between mb-8 relative z-50">
         <button 
           onClick={() => navigate("/routine")} 

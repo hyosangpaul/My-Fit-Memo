@@ -20,7 +20,7 @@ export default function WorkoutSession() {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   
   const [sessionTime, setSessionTime] = useState(0);
-  const [restTime, setRestTime] = useState(60); // Default 60s rest
+  const [restTime, setRestTime] = useState(120); // Default 120s rest
 
   const sessionInterval = useRef<any>(null);
   const restInterval = useRef<any>(null);
