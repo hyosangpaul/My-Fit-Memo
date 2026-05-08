@@ -1,0 +1,17 @@
+{
+  "name": "FitMemo - 나의 운동 메모장",
+  "short_name": "FitMemo",
+  "description": "Simple Workout Tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#D4FF00",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3043/3043236.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
